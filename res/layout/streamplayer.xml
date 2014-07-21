@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
+	<Button
+		android:id="@+id/buttonPlay"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:text="@string/Play" 
+		/>
+
+	<Button
+		android:id="@+id/buttonStop"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:text="@string/Stop" 
+		/>
+	<Button
+		android:id="@+id/buttonNext"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:text="@string/Next" 
+		/>
+	<Button
+		android:id="@+id/buttonPrev"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:text="@string/Prev" 
+		/>
+</LinearLayout>

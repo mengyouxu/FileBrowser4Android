@@ -1,0 +1,257 @@
+package meng.FileManager;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import android.app.Activity;
+import android.media.MediaPlayer;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.AdapterView.OnItemClickListener;
+
+public class FileBrowserActivity extends Activity {
+	
+	private enum playStatus{
+		statusStopped,
+		statusPlaying,
+		statusPaused
+	}
+	private Button buttonPlay = null; 
+	private Button buttonStop = null;
+	private Button buttonPrev = null;
+	private Button buttonNext = null;
+	private ListView fileListView = null;
+	private TextView currentDirTextView = null;
+	private String currentDir = null;
+	private String[] fileList = null;
+	
+	private MediaPlayer streamPlayer = null;
+	private  playStatus PlayStatus =playStatus.statusStopped;
+	
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        streamPlayer = new MediaPlayer();
+        initFileList();
+        updateFileList("/sdcard/");
+    }
+    
+    private void initFileList(){
+        setContentView(R.layout.main);
+        currentDirTextView = (TextView)findViewById(R.id.currentDir);
+        fileListView = (ListView)findViewById(R.id.fileListView);
+        fileListView.setOnItemClickListener(fileListListener);
+    }
+    
+    private void showFilelist(){
+    	setContentView(R.layout.main);
+    	currentDirTextView = (TextView)findViewById(R.id.currentDir);
+    	fileListView = (ListView)findViewById(R.id.fileListView);
+    	fileListView.setOnItemClickListener(fileListListener);
+    	updateFileList(currentDir);
+    }
+    
+    private void updateFileList(String path){
+    	currentDirTextView.setText(path);
+    	setFileListView(getFileList(path));
+    }  
+    
+    private void setFileListView(String[] fileList){
+    	Log.i("FileBrowser","File list length = " + fileList.length);
+    	for(String fileName:fileList){
+    		Log.i("",fileName);
+    	}
+    	fileListView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1,fileList));
+    }
+    
+    private String[] getFileList(String path){
+    	String[] fileNameList =  null;
+    	File dir = null;
+    	//File[] fileList = null;
+    	
+    	dir =  new File(path);
+    	//fileList =  dir.listFiles();
+    	
+    	fileNameList = dir.list();
+    	/*
+    	for(String fileName:fileNameList){
+    		Log.i("",fileName);
+    	}
+    	*/
+    	return fileNameList;
+    }
+    
+    private OnItemClickListener fileListListener = new OnItemClickListener(){
+		public void onItemClick(AdapterView<?> parent, View view, int position, long id){
+    		ArrayAdapter<?> tempAdapter = null;
+    		String filePath = (String) currentDirTextView.getText();
+    		File fileOnClick = null;
+    		if(!filePath.endsWith("/")){
+    			filePath += "/";
+    		}
+    		
+    		Log.i("FileBrowser","onItemClick!\n");
+    		Log.i("FileBrowser","position = " + position + " / " + "id = " + id);
+    		switch(position){
+    		default:
+    			tempAdapter = (ArrayAdapter<?>) parent.getAdapter();
+    			filePath += (String) tempAdapter.getItem(position);
+    			fileOnClick =  new File(filePath);
+    			if(fileOnClick.isDirectory()){
+    				currentDir = filePath;
+    				updateFileList(filePath);
+    			}else if(filePath.endsWith(".mp3")){
+    				showPlayer(filePath);
+    				/*
+    				Intent intent = new Intent(Intent.ACTION_MAIN);
+    				intent.addCategory(Intent.CATEGORY_LAUNCHER);
+    			
+    				intent.putExtra("filename", filePath);
+    				ComponentName cn =  new ComponentName("meng.mediaplayer.StreamPlayer","meng.mediaplayer.StreamPlayer.StreamPlayerActivity");
+    				intent.setComponent(cn);
+    				startActivity(intent);
+    				*/
+    			}
+    			Log.i("FileBrowser","filePath = "+ filePath);
+    			break;
+    		}
+    	}
+    };
+    
+    private void showPlayer(String path){
+    	setContentView(R.layout.streamplayer);
+    	
+    	buttonPlay = (Button)findViewById(R.id.buttonPlay);
+    	buttonStop = (Button)findViewById(R.id.buttonStop);
+    	buttonPrev = (Button)findViewById(R.id.buttonPrev);
+    	buttonNext = (Button)findViewById(R.id.buttonNext);
+    	
+    	buttonPlay.setOnClickListener(buttonListener);
+    	buttonStop.setOnClickListener(buttonListener);
+    	buttonPrev.setOnClickListener(buttonListener);
+    	buttonNext.setOnClickListener(buttonListener);
+    	
+    	buttonPlay.setText(R.string.Pause);
+    	play(path);
+    }
+    
+    private OnClickListener buttonListener =  new OnClickListener(){
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			switch(v.getId()){
+			case R.id.buttonPlay:
+				switch(PlayStatus){
+				case statusPlaying:
+					pause();
+					buttonPlay.setText(R.string.Play);
+					break;
+				case statusStopped:
+					play("/sdcard/medias/ogg/mmw-deadzy.ogg");
+					//play(Uri.parse("rtsp://192.168.56.1:8554/Welcome_To_Hearbreak.mp3").toString());
+					buttonPlay.setText(R.string.Pause);
+					break;
+				case statusPaused:
+					resume();
+					buttonPlay.setText(R.string.Pause);
+					break;
+				default :
+					break;
+				}
+				
+				break;
+			case R.id.buttonStop:
+				//initFileList();
+				showFilelist();
+				stop();
+				buttonPlay.setText(R.string.Play);
+				break;
+			case R.id.buttonNext:
+				resume();
+			default:
+					break;
+			}
+			
+		}
+    };
+    
+    private int play(String path){
+    	Log.i("StreamPlayer","play --> " + path);
+    	if(streamPlayer.isPlaying()){
+    		//return 0;
+    	}
+    	streamPlayer.reset();
+    	try {
+			streamPlayer.setDataSource(path);
+			streamPlayer.prepare();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			Log.i("StreamPlayer","IllegalArgumentException!");
+			e.printStackTrace();
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			Log.i("StreamPlayer","IllegalStateException!");
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			Log.i("StreamPlayer","IOException!");
+			e.printStackTrace();
+		}
+    	streamPlayer.start();
+
+    	PlayStatus = playStatus.statusPlaying;
+    	return 0;
+    }
+    
+    private int resume(){
+    	Log.i("StreamPlayer","resume!");
+    	streamPlayer.start();
+    	PlayStatus = playStatus.statusPlaying;
+    	return 0;
+    }
+    
+    private int pause(){
+    	Log.i("StreamPlayer","pause!");
+    	if(!streamPlayer.isPlaying()){
+    		return 0;
+    	}
+    	streamPlayer.pause();
+    	PlayStatus = playStatus.statusPaused;
+    	return 0;
+    }
+    
+    private int stop(){
+    	Log.i("StreamPlayer","stop!");
+    	streamPlayer.stop();
+    	//streamPlayer.release();
+    	streamPlayer.reset();
+    	PlayStatus = playStatus.statusStopped;
+    	return 0;
+    }
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		// 如果是返回键,直接返回到桌面
+		File tempFile = null;
+		Log.i("FileBrowser",currentDir);
+		if(currentDir.equals("/")){
+			return super.onKeyDown(keyCode, event);
+		}else if(keyCode == KeyEvent.KEYCODE_BACK){
+			tempFile = new File(currentDir);
+			currentDir = tempFile.getParent();
+			updateFileList(currentDir);
+		}
+		return true;
+	}
+    
+
+    
+}
