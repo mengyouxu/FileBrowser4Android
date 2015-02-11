@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,6 +28,7 @@ public class FileBrowserActivity extends Activity {
 		statusPlaying,
 		statusPaused
 	}
+	private String TAG = "Filebrowser";
 	private Button buttonPlay = null; 
 	private Button buttonStop = null;
 	private Button buttonPrev = null;
@@ -44,7 +47,7 @@ public class FileBrowserActivity extends Activity {
         super.onCreate(savedInstanceState);
         streamPlayer = new MediaPlayer();
         initFileList();
-        updateFileList("/sdcard/");
+        updateFileList("/");
     }
     
     private void initFileList(){
@@ -68,9 +71,9 @@ public class FileBrowserActivity extends Activity {
     }  
     
     private void setFileListView(String[] fileList){
-    	Log.i("FileBrowser","File list length = " + fileList.length);
+    	Log.i(TAG,"File list length = " + fileList.length);
     	for(String fileName:fileList){
-    		Log.i("",fileName);
+    		Log.i(TAG,fileName);
     	}
     	fileListView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1,fileList));
     }
@@ -101,8 +104,8 @@ public class FileBrowserActivity extends Activity {
     			filePath += "/";
     		}
     		
-    		Log.i("FileBrowser","onItemClick!\n");
-    		Log.i("FileBrowser","position = " + position + " / " + "id = " + id);
+    		Log.i(TAG,"onItemClick!\n");
+    		Log.i(TAG,"position = " + position + " / " + "id = " + id);
     		switch(position){
     		default:
     			tempAdapter = (ArrayAdapter<?>) parent.getAdapter();
@@ -122,8 +125,19 @@ public class FileBrowserActivity extends Activity {
     				intent.setComponent(cn);
     				startActivity(intent);
     				*/
+    			}else if(filePath.endsWith(".ts")){
+    				ComponentName componentName = new ComponentName(  
+    						"meng.FileManager",  
+    						"meng.FileManager.VideoPlayer"); 
+    				 Intent intent = new Intent();  
+    				 
+    				 //Bundle bundle = new Bundle();  
+    			     //bundle.putString("filename", filePath);   
+    			     intent.putExtra("filename",filePath);  
+    			     intent.setComponent(componentName);  
+    			     startActivity(intent);  
     			}
-    			Log.i("FileBrowser","filePath = "+ filePath);
+    			Log.i(TAG,"filePath = "+ filePath);
     			break;
     		}
     	}
@@ -157,7 +171,7 @@ public class FileBrowserActivity extends Activity {
 					buttonPlay.setText(R.string.Play);
 					break;
 				case statusStopped:
-					play("/sdcard/medias/ogg/mmw-deadzy.ogg");
+					//play("/sdcard/medias/ogg/mmw-deadzy.ogg");
 					//play(Uri.parse("rtsp://192.168.56.1:8554/Welcome_To_Hearbreak.mp3").toString());
 					buttonPlay.setText(R.string.Pause);
 					break;
@@ -186,7 +200,7 @@ public class FileBrowserActivity extends Activity {
     };
     
     private int play(String path){
-    	Log.i("StreamPlayer","play --> " + path);
+    	Log.i(TAG,"play --> " + path);
     	if(streamPlayer.isPlaying()){
     		//return 0;
     	}
@@ -204,7 +218,7 @@ public class FileBrowserActivity extends Activity {
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			Log.i("StreamPlayer","IOException!");
+			Log.i(TAG,"IOException!");
 			e.printStackTrace();
 		}
     	streamPlayer.start();
@@ -214,14 +228,14 @@ public class FileBrowserActivity extends Activity {
     }
     
     private int resume(){
-    	Log.i("StreamPlayer","resume!");
+    	Log.i(TAG,"resume!");
     	streamPlayer.start();
     	PlayStatus = playStatus.statusPlaying;
     	return 0;
     }
     
     private int pause(){
-    	Log.i("StreamPlayer","pause!");
+    	Log.i(TAG,"pause!");
     	if(!streamPlayer.isPlaying()){
     		return 0;
     	}
@@ -231,7 +245,7 @@ public class FileBrowserActivity extends Activity {
     }
     
     private int stop(){
-    	Log.i("StreamPlayer","stop!");
+    	Log.i(TAG,"stop!");
     	streamPlayer.stop();
     	//streamPlayer.release();
     	streamPlayer.reset();
@@ -239,9 +253,9 @@ public class FileBrowserActivity extends Activity {
     	return 0;
     }
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		// Èç¹ûÊÇ·µ»Ø¼ü,Ö±½Ó·µ»Øµ½×ÀÃæ
+		// ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½Ø¼ï¿½,Ö±ï¿½Ó·ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½
 		File tempFile = null;
-		Log.i("FileBrowser",currentDir);
+		Log.i(TAG,currentDir);
 		if(currentDir.equals("/")){
 			return super.onKeyDown(keyCode, event);
 		}else if(keyCode == KeyEvent.KEYCODE_BACK){
@@ -251,7 +265,4 @@ public class FileBrowserActivity extends Activity {
 		}
 		return true;
 	}
-    
-
-    
 }

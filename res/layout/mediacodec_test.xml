@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout android:layout_width="fill_parent"
+	android:gravity="center" android:layout_height="fill_parent"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<RelativeLayout 
+	    android:layout_width="fill_parent"
+		android:layout_height="fill_parent">
+
+		<SurfaceView 
+		    android:id="@+id/surfaceView"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_centerHorizontal="false"
+		    android:layout_centerVertical="false" />
+		<LinearLayout android:orientation="vertical" android:layout_width="fill_parent"
+			android:layout_height="wrap_content">
+				<Button
+					android:id="@+id/buttonNeedRender"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:text="@string/Play" 
+					/>
+				<TextView android:id="@+id/playerStatus"
+				    android:focusable="false"
+					android:visibility="visible" 
+					android:focusableInTouchMode="false"
+					android:layout_width="fill_parent" 
+					android:layout_height="wrap_content"
+					android:layout_marginLeft="20.0dip" />
+				<TextView android:id="@+id/mediaInfo"
+				    android:focusable="false"
+					android:visibility="visible" 
+					android:focusableInTouchMode="false"
+					android:layout_width="fill_parent" 
+					android:layout_height="wrap_content"
+					android:layout_marginLeft="20.0dip" />
+		</LinearLayout>
+
+
+		
+	</RelativeLayout>	
+	
+</FrameLayout>
