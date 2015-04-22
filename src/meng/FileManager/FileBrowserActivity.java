@@ -126,15 +126,17 @@ public class FileBrowserActivity extends Activity {
     				startActivity(intent);
     				*/
     			}else if(filePath.endsWith(".ts")){
-    				ComponentName componentName = new ComponentName(  
-    						"meng.FileManager",  
-    						"meng.FileManager.VideoPlayer"); 
-    				 Intent intent = new Intent();  
-    				 
-    				 //Bundle bundle = new Bundle();  
-    			     //bundle.putString("filename", filePath);   
-    			     intent.putExtra("filename",filePath);  
-    			     intent.setComponent(componentName);  
+    				//ComponentName componentName = new ComponentName(
+    				//		"meng.FileManager",
+    				//		"meng.FileManager.VideoPlayer");
+    				Intent intent = new Intent();
+
+                    intent.setClass(FileBrowserActivity.this,VideoPlayerActivity.class);
+
+    				 Bundle bundle = new Bundle();
+    			     bundle.putString("file_path", filePath);
+    			     intent.putExtras(bundle);
+    			     //intent.setComponent(componentName);
     			     startActivity(intent);  
     			}
     			Log.i(TAG,"filePath = "+ filePath);
