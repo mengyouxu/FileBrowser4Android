@@ -9,7 +9,6 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -19,7 +18,8 @@ import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -34,29 +34,19 @@ public class VideoPlayer extends Activity {
 
     private static String TAG = "videoplayer";
     String file_path = null;
-
+    FileDescriptor fd = null;
+    
     private SurfaceView videoView;
     private SurfaceHolder holder;
-    private ImageView imageView;
-    private TextView timeTextView;
-    private TextView titleTextView;
-    private TextView clockTextView;
+
     private Button btnLeftTop;
     private Button btnMiddle720p;
     private Button btnFullScreen;
-    private ScheduledExecutorService scheduledExecutorService;
-    private Handler handler;
-    private SimpleDateFormat dateFormat;
     private RelativeLayout.LayoutParams params_r;
 
-
-    private boolean pause;
-    private boolean seekBackward;
-    private boolean seekForward;
     private Uri videoUri;
     private MediaPlayer mediaPlayer;
-    private Context context;
-    private MediaPlayer.OnPreparedListener onPreparedListener;
+
     private MediaController mediaController;
     protected SurfaceHolder surfaceHolder;
     private Rect surface_Rect;
@@ -66,20 +56,14 @@ public class VideoPlayer extends Activity {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.videoplayer);
 
-        this.dateFormat = new SimpleDateFormat("HH:mm:ss");
+        new SimpleDateFormat("HH:mm:ss");
 
-        this.scheduledExecutorService = Executors.newScheduledThreadPool(2);
-        this.handler = new Handler();
+        Executors.newScheduledThreadPool(2);
+        new Handler();
 
         videoView = (SurfaceView) this.findViewById(R.id.surfaceView);
-
         videoView.getHolder().addCallback(surfaceHolderCallback);
-        //this.imageView = (ImageView) this.findViewById(R.id.image);
-        //this.imageView.setImageResource(R.drawable.ad);
 
-        //this.timeTextView = (TextView) this.findViewById(R.id.timeText);
-        //this.titleTextView = (TextView) this.findViewById(R.id.videoTitle);
-        //this.clockTextView = (TextView) this.findViewById(R.id.clockText);
 
         Intent intent_1 = this.getIntent();
         Bundle bundle_1 = intent_1.getExtras();
@@ -103,7 +87,6 @@ public class VideoPlayer extends Activity {
         btnMiddle720p.setOnClickListener(buttonListener);
         btnFullScreen.setOnClickListener(buttonListener);
 
-        MediaController controller = new MediaController(this);
         holder = videoView.getHolder();
         //videoView.setMediaController(controller);
 
@@ -207,6 +190,7 @@ public class VideoPlayer extends Activity {
             mediaPlayer.reset();
             mediaPlayer.release();
             mediaPlayer = null;
+            fd = null;
         }
     }
 
@@ -229,6 +213,8 @@ public class VideoPlayer extends Activity {
         this.mediaPlayer = new MediaPlayer();
         try {
             this.mediaPlayer.setDataSource(this.getBaseContext(),videoUri);
+        	//fd= (new FileInputStream(videoUri.getPath()).getFD());
+            //this.mediaPlayer.setDataSource(fd);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
             throw new RuntimeException(e);
@@ -242,9 +228,4 @@ public class VideoPlayer extends Activity {
             }
         });
     }
-
-    public void setOnPreparedListener(MediaPlayer.OnPreparedListener onPreparedListener) {
-        this.onPreparedListener = onPreparedListener;
-    }
-
 }

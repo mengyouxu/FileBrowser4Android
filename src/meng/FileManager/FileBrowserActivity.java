@@ -1,19 +1,15 @@
 package meng.FileManager;
 
 import java.io.File;
-import java.io.IOException;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -67,17 +63,9 @@ public class FileBrowserActivity extends Activity {
     private String[] getFileList(String path){
     	String[] fileNameList =  null;
     	File dir = null;
-    	//File[] fileList = null;
-    	
     	dir =  new File(path);
-    	//fileList =  dir.listFiles();
-    	
     	fileNameList = dir.list();
-    	/*
-    	for(String fileName:fileNameList){
-    		Log.i("",fileName);
-    	}
-    	*/
+
     	return fileNameList;
     }
     
@@ -103,18 +91,13 @@ public class FileBrowserActivity extends Activity {
     			}else if(filePath.endsWith(".mp3")){
                     showMusicPlayer(filePath);
     			}else if(filePath.endsWith(".ts")){
-    				//ComponentName componentName = new ComponentName(
-    				//		"meng.FileManager",
-    				//		"meng.FileManager.VideoPlayer");
-    				Intent intent = new Intent();
-
-                    intent.setClass(FileBrowserActivity.this,VideoPlayerActivity.class);
-
-    				 Bundle bundle = new Bundle();
-    			     bundle.putString("file_path", filePath);
-    			     intent.putExtras(bundle);
-    			     //intent.setComponent(componentName);
-    			     startActivity(intent);  
+    				showVideoPlayer(filePath);
+    			}else if(filePath.endsWith(".mp4")){
+    				showVideoPlayer(filePath);
+    			}else if(filePath.endsWith(".mkv")){
+    				showVideoPlayer(filePath);
+    			}else if(filePath.endsWith(".3gp")){
+    				showVideoPlayer(filePath);
     			}
     			Log.i(TAG,"filePath = "+ filePath);
     			break;
@@ -131,6 +114,22 @@ public class FileBrowserActivity extends Activity {
     	intent.putExtras(bundle_1);
 
     	startActivity(intent);
+    }
+    
+    private void showVideoPlayer(String path){
+    	
+		//ComponentName componentName = new ComponentName(
+		//		"meng.FileManager",
+		//		"meng.FileManager.VideoPlayer");
+		Intent intent = new Intent();
+
+        intent.setClass(FileBrowserActivity.this,VideoPlayerActivity.class);
+
+		 Bundle bundle = new Bundle();
+	     bundle.putString("file_path", path);
+	     intent.putExtras(bundle);
+	     //intent.setComponent(componentName);
+	     startActivity(intent); 	
     }
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
