@@ -16,6 +16,7 @@ import android.media.MediaCodec;
 import android.media.MediaCodec.BufferInfo;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -157,9 +158,17 @@ public class MediaCodecTest extends Activity implements SurfaceHolder.Callback {
 				
 				if (mime.startsWith("video/")) {
 					extractor.selectTrack(i);
-					decoder = MediaCodec.createDecoderByType(mime);
-					decoder.configure(format, surface, null, 0);
-					Log.i(TAG,"Create decoder ok");
+					try {
+						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+							decoder = MediaCodec.createDecoderByType(mime);
+						}
+						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+							decoder.configure(format, surface, null, 0);
+						}
+					}catch(IOException e2){
+						e2.printStackTrace();
+					}
+					Log.i(TAG, "Create decoder ok");
 					break;
 				}
 			}
