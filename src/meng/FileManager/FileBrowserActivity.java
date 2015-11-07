@@ -135,10 +135,14 @@ public class FileBrowserActivity extends Activity {
 
         File tempFile = null;
         Log.i(TAG,currentDir);
-        if(currentDir.equals("/")){
-            return super.onKeyDown(keyCode, event);
-        }else if(keyCode == KeyEvent.KEYCODE_BACK){
 
+        if(keyCode == KeyEvent.KEYCODE_BACK){
+			if(currentDir.equals("/")) {
+				return super.onKeyDown(keyCode, event);
+			}
+			File fileOnClick =  new File(currentDir);
+			currentDir = fileOnClick.getParent();
+			updateFileList(currentDir);
         }
         return true;
     }
