@@ -9,7 +9,9 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -32,7 +34,7 @@ import android.media.MediaPlayer.OnPreparedListener;
  */
 public class VideoPlayer extends Activity {
 
-    private static String TAG = "videoplayer";
+    private static String TAG = "VideoPlayer";
     String file_path = null;
     FileDescriptor fd = null;
     
@@ -69,15 +71,16 @@ public class VideoPlayer extends Activity {
         Bundle bundle_1 = intent_1.getExtras();
 
         file_path = bundle_1.getString("file_path");
+        Log.i(TAG,"setDataSource: " + file_path);
 
         params_r = (RelativeLayout.LayoutParams)videoView.getLayoutParams();
 
-        params_r.width = 600;
-        params_r.height = 400;
-        params_r.leftMargin = 212;
-        params_r.topMargin = 184;
+        //params_r.width = 600;
+        //params_r.height = 400;
+        //params_r.leftMargin = 212;
+        //params_r.topMargin = 184;
         //params_r.leftMargin = 0;
-        videoView.setLayoutParams(params_r);
+        //videoView.setLayoutParams(params_r);
 
         btnLeftTop = (Button)this.findViewById(R.id.btnLeftTop);
         btnMiddle720p = (Button)this.findViewById(R.id.btnMiddle720p);
@@ -89,16 +92,7 @@ public class VideoPlayer extends Activity {
 
         holder = videoView.getHolder();
         //videoView.setMediaController(controller);
-
-        //holder.setSizeFromLayout();
-        holder.setFixedSize(480,320);
-
-        //LayoutParams params = new LinearLayout.LayoutParams(480, 320);
-        //RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)this.videoView.getLayoutParams();
-        //params.width = 1280;
-        //params.height = 720;
-        //this.getWindowManager().getDefaultDisplay().getWidth();
-        //this.videoView.setLayoutParams(params);
+        mediaController = new MediaController(this);
 
         setVideoURI(Uri.parse(file_path));
     }
@@ -219,12 +213,94 @@ public class VideoPlayer extends Activity {
             Log.e(TAG, e.getMessage());
             throw new RuntimeException(e);
         }
+        mediaController.setMediaPlayer(new MediaController.MediaPlayerControl() {
+
+            @Override
+            public void start() {
+                Log.i(TAG, "MediaControl.start");
+                mediaPlayer.start();
+            }
+
+            @Override
+            public void pause() {
+                Log.i(TAG,"MediaControl.pause" );
+                mediaPlayer.pause();
+            }
+
+            @Override
+            public int getDuration() {
+                int  duration = mediaPlayer.getDuration();
+                Log.i(TAG,"getDuration : " + duration);
+                return duration;
+            }
+
+            @Override
+            public int getCurrentPosition() {
+                Log.i(TAG,"MediaControl.getCurrentPosition" );
+
+                return mediaPlayer.getCurrentPosition();
+            }
+
+            @Override
+            public void seekTo(int i) {
+                Log.i(TAG,"MediaControl.getCurrentPosition : " + i );
+                mediaPlayer.seekTo(i);
+            }
+
+            @Override
+            public boolean isPlaying() {
+                Log.i(TAG,"MediaControl.isPlaying" );
+                return mediaPlayer.isPlaying();
+            }
+
+            @Override
+            public int getBufferPercentage() {
+                Log.i(TAG,"MediaControl.getBufferPercentage" );
+                return 0;
+            }
+
+            @Override
+            public boolean canPause() {
+                Log.i(TAG,"MediaControl.canPause" );
+                return true;
+            }
+
+            @Override
+            public boolean canSeekBackward() {
+                Log.i(TAG,"MediaControl.canSeekBackward" );
+                return true;
+            }
+
+            @Override
+            public boolean canSeekForward() {
+                Log.i(TAG,"MediaControl.canSeekForward" );
+                return true;
+            }
+
+            @Override
+            public int getAudioSessionId() {
+                Log.i(TAG,"MediaControl.getAudioSessionId" );
+                return 0;
+            }
+        });
+
         this.mediaPlayer.prepareAsync();
         this.mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         this.mediaPlayer.setOnPreparedListener(new OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
-                mp.start();
+                Log.i(TAG, "onPrepared");
+                //mp.start();
+                mediaController.setAnchorView(videoView);
+                mediaController.show();
+                videoView.setOnTouchListener(new View.OnTouchListener(){
+
+                    @Override
+                    public boolean onTouch(View view, MotionEvent motionEvent) {
+                        mediaController.show();
+                        return false;
+                    }
+                });
             }
         });
     }
