@@ -2,6 +2,7 @@ package meng.FileManager;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -19,11 +20,18 @@ public class VideoPlayerActivity extends Activity{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.videoplayeractivity);
-
+        Bundle bundle_1 = null;
         Intent intent_1 = this.getIntent();
-        Bundle bundle_1 = intent_1.getExtras();
-        file_path = bundle_1.getString("file_path");
-
+        String action = intent_1.getAction();
+        if(intent_1.ACTION_VIEW.equals(action)){
+            Log.i(TAG,"get action");
+            Uri uri = (Uri)intent_1.getData();
+            file_path = uri.getPath();
+            Log.i(TAG,"file name : " + file_path);
+        }else {
+            bundle_1 = intent_1.getExtras();
+            file_path = bundle_1.getString("file_path");
+        }
         Button button_mediaplayer = (Button) findViewById(R.id.button_use_mediaplayer);
         button_mediaplayer.setOnClickListener(buttonListener);
 

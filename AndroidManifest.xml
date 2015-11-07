@@ -25,6 +25,18 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.view" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/octet-stream" />
+                <data android:mimeType="video/mpeg"></data>
+                <data android:mimeType="video/quicktime" />
+                <data android:mimeType="video/x-msvideo" />
+                <data android:mimeType="video/x-sgi-movie" />
+                <data android:mimeType="video/3gpp" />
+                <data android:mimeType="video/mp4" />
+
+            </intent-filter>
         </activity>
         <activity
             android:name=".MediaCodecTest"
