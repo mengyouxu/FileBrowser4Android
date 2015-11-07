@@ -1,6 +1,10 @@
 package meng.FileManager;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -98,7 +102,13 @@ public class FileBrowserActivity extends Activity {
     				showVideoPlayer(filePath);
     			}else if(filePath.endsWith(".3gp")){
     				showVideoPlayer(filePath);
-    			}
+    			}else if(filePath.endsWith(".ulist")){
+					String filename = parsePlayScript(filePath);
+					Log.i(TAG,"filename : " + filename);
+					if(filename != null) {
+						showVideoPlayer(filename);
+					}
+				}
     			Log.i(TAG,"filePath = "+ filePath);
     			break;
     		}
@@ -131,6 +141,24 @@ public class FileBrowserActivity extends Activity {
 	     //intent.setComponent(componentName);
 	     startActivity(intent); 	
     }
+
+	private String parsePlayScript(String path){
+		FileInputStream fd = null;
+		try {
+			fd = new FileInputStream(path);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		try {
+			InputStreamReader read = new InputStreamReader(fd);
+			BufferedReader bufferedReader = new BufferedReader(read);
+			return bufferedReader.readLine();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
         File tempFile = null;
