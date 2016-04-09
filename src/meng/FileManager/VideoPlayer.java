@@ -17,6 +17,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -44,7 +45,7 @@ public class VideoPlayer extends Activity {
     private Button btnLeftTop;
     private Button btnMiddle720p;
     private Button btnFullScreen;
-    private RelativeLayout.LayoutParams params_r;
+    private LinearLayout.LayoutParams params_r;
 
     private Uri videoUri;
     private MediaPlayer mediaPlayer;
@@ -73,7 +74,7 @@ public class VideoPlayer extends Activity {
         file_path = bundle_1.getString("file_path");
         Log.i(TAG,"setDataSource: " + file_path);
 
-        params_r = (RelativeLayout.LayoutParams)videoView.getLayoutParams();
+
 
         //params_r.width = 600;
         //params_r.height = 400;
@@ -105,30 +106,17 @@ public class VideoPlayer extends Activity {
                     Log.i("VideoPlayer", "R.id.btnLeftTop");
                     videoView.layout(0,0,400,300);
 
-                    params_r.width = 400;
-                    params_r.height = 300;
-                    params_r.leftMargin = 0;
-                    params_r.topMargin = 100;
-                    videoView.setLayoutParams(params_r);
 
                     //holder.setFixedSize(400,300);
                     break;
                 case R.id.btnMiddle720p:
                     Log.i("VideoPlayer","R.id.btnMiddle720p");
-                    params_r.width = 600;
-                    params_r.height = 400;
-                    params_r.leftMargin = 212;
-                    params_r.topMargin = 184;
-                    videoView.setLayoutParams(params_r);
+
                     //holder.setFixedSize(600,400);
                     break;
                 case R.id.btnFullScreen:
                     Log.i("VideoPlayer","R.id.btnFullScreen");
-                    params_r.width = 800;
-                    params_r.height = 600;
-                    params_r.leftMargin = 112;
-                    params_r.topMargin = 84;
-                    videoView.setLayoutParams(params_r);
+
                     holder.setFixedSize(800,600);
                     break;
                 default:
@@ -207,7 +195,7 @@ public class VideoPlayer extends Activity {
         this.mediaPlayer = new MediaPlayer();
         try {
             this.mediaPlayer.setDataSource(this.getBaseContext(),videoUri);
-        	//fd= (new FileInputStream(videoUri.getPath()).getFD());
+            //fd= (new FileInputStream(videoUri.getPath()).getFD());
             //this.mediaPlayer.setDataSource(fd);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());

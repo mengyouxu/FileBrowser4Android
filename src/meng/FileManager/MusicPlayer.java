@@ -15,10 +15,10 @@ import java.io.IOException;
 public class MusicPlayer extends Activity{
 
     String TAG = "MusicPlayer";
-	private Button buttonPlay = null; 
-	private Button buttonStop = null;
-	private Button buttonPrev = null;
-	private Button buttonNext = null;
+    private Button buttonPlay = null; 
+    private Button buttonStop = null;
+    private Button buttonPrev = null;
+    private Button buttonNext = null;
     private MediaPlayer musicplayer = null;
 
     String file_path = null;
@@ -52,9 +52,54 @@ public class MusicPlayer extends Activity{
         file_path = bundle_1.getString("file_path");
 
         musicplayer = new MediaPlayer();
+        musicplayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                Log.i(TAG, "onPrepared");
+                musicplayer.seekTo(0);
+            }
+        });
+
+        musicplayer.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener() {
+            @Override
+            public void onSeekComplete(MediaPlayer mp) {
+                Log.i(TAG, "onSeekComplete");
+                musicplayer.start();
+            }
+        });
+        musicplayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+            @Override
+            public boolean onError(MediaPlayer mp, int what, int extra) {
+                Log.i(TAG, "onError what: " + what + ", extra : " + extra);
+                return true;
+            }
+        });
+
+        musicplayer.setOnInfoListener(new MediaPlayer.OnInfoListener() {
+            @Override
+            public boolean onInfo(MediaPlayer mp, int what, int extra) {
+                Log.i(TAG, "onInfo what: " + what + ", extra : " + extra);
+                return true;
+            }
+        });
+        try {
+            musicplayer.setDataSource(file_path);
+            musicplayer.prepareAsync();
+        } catch (IllegalArgumentException e) {
+            // TODO Auto-generated catch block
+            Log.i(TAG,"IllegalArgumentException!");
+            e.printStackTrace();
+        } catch (IllegalStateException e) {
+            // TODO Auto-generated catch block
+            Log.i(TAG,"IllegalStateException!");
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            Log.i(TAG,"IOException!");
+            e.printStackTrace();
+        }
 
     }
-
 
     private View.OnClickListener buttonListener =  new View.OnClickListener(){
         public void onClick(View v) {
@@ -67,7 +112,7 @@ public class MusicPlayer extends Activity{
                             buttonPlay.setText(R.string.Play);
                             break;
                         case statusStopped:
-                            play(file_path);
+                            play();
                             buttonPlay.setText(R.string.Pause);
                             break;
                         case statusPaused:
@@ -92,30 +137,12 @@ public class MusicPlayer extends Activity{
         }
     };
 
-    private int play(String path){
-        Log.i(TAG, "play --> " + path);
+    private int play(){
+        Log.i(TAG, "play");
         if(musicplayer.isPlaying()){
             //return 0;
         }
-        musicplayer.reset();
-        try {
-            musicplayer.setDataSource(path);
-            musicplayer.prepare();
-        } catch (IllegalArgumentException e) {
-            // TODO Auto-generated catch block
-            Log.i("StreamPlayer","IllegalArgumentException!");
-            e.printStackTrace();
-        } catch (IllegalStateException e) {
-            // TODO Auto-generated catch block
-            Log.i("StreamPlayer","IllegalStateException!");
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            Log.i(TAG,"IOException!");
-            e.printStackTrace();
-        }
         musicplayer.start();
-
         PlayStatus = playStatus.statusPlaying;
         return 0;
     }
