@@ -8,6 +8,8 @@ import java.io.InputStreamReader;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.media.MediaMetadataRetriever;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -30,9 +32,18 @@ public class FileBrowserActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+		Intent intent_1 = this.getIntent();
+		String action = intent_1.getAction();
 
-        initFileList();
-        updateFileList("/storage/sda1/2_medias");
+		Log.i(TAG, "get action : " + action);
+		initFileList();
+
+		File f = new File("/storage/sdcard");
+		if(f.exists()){
+			updateFileList("/storage/sdcard");
+		} else {
+			updateFileList("/");
+		}
     }
     
     private void initFileList(){
@@ -81,50 +92,45 @@ public class FileBrowserActivity extends Activity {
                 filePath += "/";
             }
 
-            Log.i(TAG,"onItemClick!\n");
-            Log.i(TAG,"position = " + position + " / " + "id = " + id);
-            switch(position){
-            default:
-                tempAdapter = (ArrayAdapter<?>) parent.getAdapter();
-                filePath += (String) tempAdapter.getItem(position);
-                fileOnClick =  new File(filePath);
-                if(fileOnClick.isDirectory()){
-                    currentDir = filePath;
-                    updateFileList(filePath);
-                }else if(filePath.endsWith(".mp3")){
-                    showMusicPlayer(filePath);
-                }else if(filePath.endsWith(".wav")){
-                    showMusicPlayer(filePath);
-                }else if(filePath.endsWith(".ogg")){
-                    showMusicPlayer(filePath);
-                }else if(filePath.endsWith(".m4a")){
-                    showMusicPlayer(filePath);
-                }else if(filePath.endsWith(".aac")){
-                    showMusicPlayer(filePath);
-                }else if(filePath.endsWith(".ts")){
-                    showVideoPlayer(filePath);
-                }else if(filePath.endsWith(".mp4")){
-                    showVideoPlayer(filePath);
-                }else if(filePath.endsWith(".mkv")){
-                    showVideoPlayer(filePath);
-                }else if(filePath.endsWith(".3gp")){
-                    showVideoPlayer(filePath);
-                }else if(filePath.endsWith(".ulist")){
-                    String filename = parsePlayScript(filePath);
-                    Log.i(TAG,"filename : " + filename);
-                    if(filename != null) {
-                        showVideoPlayer(filename);
-                    }
-                }
-                Log.i(TAG,"filePath = "+ filePath);
-                break;
-            }
-        }
+    		Log.i(TAG,"onItemClick!\n");
+    		Log.i(TAG,"position = " + position + " / " + "id = " + id);
+
+			tempAdapter = (ArrayAdapter<?>) parent.getAdapter();
+			filePath += (String) tempAdapter.getItem(position);
+			fileOnClick =  new File(filePath);
+			if(fileOnClick.isDirectory()){
+				currentDir = filePath;
+				updateFileList(filePath);
+			}else if(filePath.endsWith(".ulist")){
+				String filename = parsePlayScript(filePath);
+				Log.i(TAG,"filename : " + filename);
+				if(filename != null) {
+					showVideoPlayer(filename);
+				}
+			} else {
+				openFile(fileOnClick);
+			}
+    	}
     };
 
+	private void openFile(File file){
+		Intent intent = new Intent();
+		MediaMetadataRetriever metaDataRetriever = new MediaMetadataRetriever();
+		metaDataRetriever.setDataSource(String.valueOf(file));
+		String mime =  metaDataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE);
+		Log.i(TAG,"mime: " + mime +" --> " + Uri.fromFile(file).getPath() );
+		intent.setDataAndType(Uri.fromFile(file),mime);
+		intent.setAction("android.intent.action.VIEW");
+		try{
+			startActivity(intent);
+		}catch(Exception e) {
+			Log.e(TAG, "cannot open file" + Uri.fromFile(file).getPath());
+			return;
+		}
+	}
     private void showMusicPlayer(String path){
 
-        Intent intent = new Intent(FileBrowserActivity.this,MusicPlayerActivity.class);
+    	Intent intent = new Intent(FileBrowserActivity.this,MusicPlayer.class);
         Bundle bundle_1 = new Bundle();
         bundle_1.putString("file_path",path);
 

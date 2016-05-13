@@ -157,20 +157,20 @@ public class MediaCodecTest extends Activity implements SurfaceHolder.Callback {
                 
                 if (mime.startsWith("video/")) {
                     extractor.selectTrack(i);
-                    try {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                            decoder = MediaCodec.createDecoderByType(mime);
-                        }
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                            decoder.configure(format, null, null, 0);
-                        }
-                    }catch(IOException e2){
-                        e2.printStackTrace();
-                    }
-                    Log.i(TAG, "Create decoder ok");
-                    break;
-                }
-            }
+
+					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+						Log.i(TAG,"set int: max-width & max-height");
+						format.setInteger("max-width", 3840);
+						format.setInteger("max-height",2160);
+					}
+
+					decoder = MediaCodec.createDecoderByType(mime);
+					decoder.configure(format, null, null, 0);
+
+					Log.i(TAG, "Create decoder ok");
+					break;
+				}
+			}
 
             if (decoder != null) {
                 decoder.start();
@@ -243,17 +243,21 @@ public class MediaCodecTest extends Activity implements SurfaceHolder.Callback {
                         }
                     default:
                         ByteBuffer buffer = outputBuffers[outIndex];
-                        MediaFormat outBufferFmt = decoder.getOutputFormat(outIndex);
-                        if(outBufferFmt != null) {
-                            int color_format = outBufferFmt.getInteger(MediaFormat.KEY_COLOR_FORMAT);
-                            Log.i(TAG, "COLOR_FORMAT : " + color_format);
-                        }
 
-                        Image outPutImg = decoder.getOutputImage(outIndex);
-                        if(outPutImg != null) {
-                            int img_format = outPutImg.getFormat();
-                            Log.i(TAG, "output img fmt: " + img_format);
-                        }
+						/* getOutputFormat need API level 21(Android 5.0.x)
+						MediaFormat outBufferFmt = decoder.getOutputFormat(outIndex);
+						if(outBufferFmt != null) {
+							int color_format = outBufferFmt.getInteger(MediaFormat.KEY_COLOR_FORMAT);
+							Log.i(TAG, "COLOR_FORMAT : " + color_format);
+						}
+						*/
+						/* getOutputImage need API level 21(Android 5.0.x)
+						Image outPutImg = decoder.getOutputImage(outIndex);
+						if(outPutImg != null) {
+							int img_format = outPutImg.getFormat();
+							Log.i(TAG, "output img fmt: " + img_format);
+						}
+						*/
 
                         frame_num++;
                         //Log.i(TAG,"render : " + outIndex);

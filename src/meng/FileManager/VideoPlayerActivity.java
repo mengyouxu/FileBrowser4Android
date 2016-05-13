@@ -23,7 +23,7 @@ public class VideoPlayerActivity extends Activity{
         Bundle bundle_1 = null;
         Intent intent_1 = this.getIntent();
         String action = intent_1.getAction();
-        if(intent_1.ACTION_VIEW.equals(action)){
+        if(Intent.ACTION_VIEW.equals(action)){
             Log.i(TAG,"get action");
             Uri uri = (Uri)intent_1.getData();
             file_path = uri.getPath();
@@ -78,15 +78,15 @@ public class VideoPlayerActivity extends Activity{
     private View.OnClickListener buttonListener =  new View.OnClickListener(){
         @Override
         public void onClick(View v) {
+            Bundle bundle_2 = new Bundle();
+            Intent intent = new Intent();
+            bundle_2.putString("file_path",file_path);
+
             switch(v.getId()){
                 case R.id.button_use_mediaplayer: {
                     Log.i(TAG, "R.id.button_use_mediaplayer");
-                    Intent intent = new Intent();
                     intent.setClass(VideoPlayerActivity.this,
                             VideoPlayer.class);
-
-                    Bundle bundle_2 = new Bundle();
-                    bundle_2.putString("file_path",file_path);
 
                     intent.putExtras(bundle_2);
                     startActivity(intent);
@@ -94,13 +94,20 @@ public class VideoPlayerActivity extends Activity{
                 }
                 case R.id.button_use_mediacode: {
                     Log.i(TAG, "R.id.button_use_mediacode");
-                    Intent intent = new Intent();
                     intent.setClass(VideoPlayerActivity.this,
                             MediaCodecTest.class);
 
-                    Bundle bundle_2 = new Bundle();
                     bundle_2.putString("file_path",file_path);
+                    intent.putExtras(bundle_2);
+                    startActivity(intent);
+                    break;
+                }
+                case R.id.button_use_exoplayer: {
+                    Log.i(TAG, "R.id.button_use_exoplayer");
+                    intent.setClass(VideoPlayerActivity.this,
+                            ExoPlayerActivity.class);
 
+                    bundle_2.putString("file_path",file_path);
                     intent.putExtras(bundle_2);
                     startActivity(intent);
                     break;

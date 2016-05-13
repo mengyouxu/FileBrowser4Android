@@ -83,9 +83,9 @@ public class VideoPlayer extends Activity {
         //params_r.leftMargin = 0;
         //videoView.setLayoutParams(params_r);
 
-        btnLeftTop = (Button)this.findViewById(R.id.btnLeftTop);
-        btnMiddle720p = (Button)this.findViewById(R.id.btnMiddle720p);
-        btnFullScreen = (Button)this.findViewById(R.id.btnFullScreen);
+        btnLeftTop = (Button)this.findViewById(R.id.btn1);
+        btnMiddle720p = (Button)this.findViewById(R.id.btn2);
+        btnFullScreen = (Button)this.findViewById(R.id.btn3);
 
         btnLeftTop.setOnClickListener(buttonListener);
         btnMiddle720p.setOnClickListener(buttonListener);
@@ -102,22 +102,28 @@ public class VideoPlayer extends Activity {
         public void onClick(View v) {
             // TODO Auto-generated method stub
             switch(v.getId()){
-                case R.id.btnLeftTop:
-                    Log.i("VideoPlayer", "R.id.btnLeftTop");
-                    videoView.layout(0,0,400,300);
-
-
+                case R.id.btn1:
+                    Log.i("VideoPlayer", "R.id.btn1");
+                    if (mediaPlayer != null) {
+                        mediaPlayer.start();
+                    }
+                    //videoView.layout(0,0,400,300);
                     //holder.setFixedSize(400,300);
                     break;
-                case R.id.btnMiddle720p:
-                    Log.i("VideoPlayer","R.id.btnMiddle720p");
-
+                case R.id.btn2:
+                    Log.i("VideoPlayer","R.id.btn2");
+                    if (mediaPlayer != null) {
+                        mediaPlayer.pause();
+                    }
                     //holder.setFixedSize(600,400);
                     break;
-                case R.id.btnFullScreen:
-                    Log.i("VideoPlayer","R.id.btnFullScreen");
-
-                    holder.setFixedSize(800,600);
+                case R.id.btn3:
+                    Log.i("VideoPlayer","R.id.btn3");
+                    if (mediaPlayer != null) {
+                        mediaPlayer.stop();
+                        //mediaPlayer.reset();
+                    }
+                    //holder.setFixedSize(800,600);
                     break;
                 default:
                     break;
@@ -289,6 +295,27 @@ public class VideoPlayer extends Activity {
                         return false;
                     }
                 });
+            }
+        });
+        this.mediaPlayer.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener() {
+            @Override
+            public void onSeekComplete(MediaPlayer mp) {
+                Log.i(TAG, "onSeekComplete");
+            }
+        });
+        this.mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+            @Override
+            public boolean onError(MediaPlayer mp, int what, int extra) {
+                Log.i(TAG, "onError what: " + what + ", extra : " + extra);
+                return true;
+            }
+        });
+
+        this.mediaPlayer.setOnInfoListener(new MediaPlayer.OnInfoListener() {
+            @Override
+            public boolean onInfo(MediaPlayer mp, int what, int extra) {
+                Log.i(TAG, "onInfo what: " + what + ", extra : " + extra);
+                return true;
             }
         });
     }

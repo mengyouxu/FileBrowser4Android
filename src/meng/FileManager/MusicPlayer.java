@@ -3,6 +3,7 @@ package meng.FileManager;
 import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -48,9 +49,16 @@ public class MusicPlayer extends Activity{
         buttonNext.setOnClickListener(buttonListener);
 
         Intent intent_1 = this.getIntent();
-        Bundle bundle_1 = intent_1.getExtras();
-        file_path = bundle_1.getString("file_path");
-
+        String action = intent_1.getAction();
+        if(intent_1.ACTION_VIEW.equals(action)){
+            Log.i(TAG, "get action");
+            Uri uri = (Uri)intent_1.getData();
+            file_path = uri.getPath();
+            Log.i(TAG,"file name : " + file_path);
+        } else {
+            Bundle bundle_1 = intent_1.getExtras();
+            file_path = bundle_1.getString("file_path");
+        }
         musicplayer = new MediaPlayer();
         musicplayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
