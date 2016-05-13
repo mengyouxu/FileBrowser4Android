@@ -165,7 +165,7 @@ public class MediaCodecTest extends Activity implements SurfaceHolder.Callback {
 					}
 
 					decoder = MediaCodec.createDecoderByType(mime);
-					decoder.configure(format, null, null, 0);
+					decoder.configure(format, surface, null, 0);
 
 					Log.i(TAG, "Create decoder ok");
 					break;
