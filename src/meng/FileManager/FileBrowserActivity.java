@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaMetadataRetriever;
@@ -38,12 +37,12 @@ public class FileBrowserActivity extends Activity {
 		Log.i(TAG, "get action : " + action);
 		initFileList();
 
-		File f = new File("/storage/sdcard");
-		if(f.exists()){
-			updateFileList("/storage/sdcard");
-		} else {
+		//File f = new File("/storage/sdcard");
+		//if(f.exists()){
+		//	updateFileList("/storage/sdcard");
+		//} else {
 			updateFileList("/");
-		}
+		//}
     }
     
     private void initFileList(){
@@ -133,10 +132,8 @@ public class FileBrowserActivity extends Activity {
     	Intent intent = new Intent(FileBrowserActivity.this,MusicPlayer.class);
         Bundle bundle_1 = new Bundle();
         bundle_1.putString("file_path",path);
-
-        intent.putExtras(bundle_1);
-
-        startActivity(intent);
+    	intent.putExtras(bundle_1);
+    	startActivity(intent);
     }
 
     private void showVideoPlayer(String path){

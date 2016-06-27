@@ -12,7 +12,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
+import android.graphics.ImageFormat;
 import android.media.Image;
+import android.media.ImageReader;
 import android.media.MediaCodec;
 import android.media.MediaCodec.BufferInfo;
 import android.media.MediaExtractor;
@@ -20,6 +22,7 @@ import android.media.MediaFormat;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
@@ -52,6 +55,11 @@ public class MediaCodecTest extends Activity implements SurfaceHolder.Callback {
     private AssetFileDescriptor fileDescriptor;
     private ByteBuffer[] inputBuffers = null;
     private ByteBuffer[] outputBuffers = null;
+	private ImageReader mReader;
+	private HandlerThread mHandlerThread;
+	private Handler mHandler;
+	private ImageListener mImageListener;
+	private Surface mReaderSurface;
 
     private Runnable runnable = new Runnable() {
         public void run() {
@@ -163,8 +171,18 @@ public class MediaCodecTest extends Activity implements SurfaceHolder.Callback {
 						format.setInteger("max-width", 3840);
 						format.setInteger("max-height",2160);
 					}
+					int iImageFormat = ImageFormat.YUV_420_888;
+					mImageListener = new ImageListener();
+					mHandlerThread = new HandlerThread(TAG);
+					mHandlerThread.start();;
+					mHandler = new Handler(mHandlerThread.getLooper());
+					mReader = ImageReader.newInstance(1280,720, iImageFormat, 1);
+					mReader.setOnImageAvailableListener(mImageListener, mHandler);
+					mReaderSurface = mReader.getSurface();
 
 					decoder = MediaCodec.createDecoderByType(mime);
+					// You can use mReaderSurface to get the frame data
+					//decoder.configure(format, mReaderSurface/*surface*/, null, 0);
 					decoder.configure(format, surface, null, 0);
 
 					Log.i(TAG, "Create decoder ok");
@@ -299,4 +317,12 @@ public class MediaCodecTest extends Activity implements SurfaceHolder.Callback {
             }
         }
     };
+
+	private static class ImageListener implements ImageReader.OnImageAvailableListener{
+		String TAG = "ImageListener";
+		@Override
+		public void onImageAvailable(ImageReader imageReader) {
+			Log.i(TAG, "onImageAvailable");
+		}
+	}
 }
