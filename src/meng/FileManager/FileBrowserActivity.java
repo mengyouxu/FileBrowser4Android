@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -26,7 +27,7 @@ public class FileBrowserActivity extends Activity {
     private TextView currentDirTextView = null;
     private String currentDir = null;
     private String[] fileList = null;
-
+	private String sdcardPath = null;
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,11 +38,19 @@ public class FileBrowserActivity extends Activity {
 		Log.i(TAG, "get action : " + action);
 		initFileList();
 
+		boolean hasSDCard = Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
+		if(hasSDCard == true){
+			sdcardPath = Environment.getExternalStorageDirectory().getPath();
+			Log.i(TAG, "sdcardPath : " + sdcardPath);
+			updateFileList(sdcardPath);
+		} else {
+			updateFileList("/sdcard/");
+		}
 		//File f = new File("/storage/sdcard");
 		//if(f.exists()){
 		//	updateFileList("/storage/sdcard");
 		//} else {
-			updateFileList("/");
+		//	updateFileList("/sdcard/");
 		//}
     }
     
