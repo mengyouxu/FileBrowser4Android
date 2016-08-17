@@ -2,6 +2,8 @@ package meng.FileBrowser;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.media.MediaCodec;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
