@@ -6,16 +6,16 @@
         android:layout_height="wrap_content"   
         android:id="@+id/MyListItem"   
         android:paddingBottom="3dip"   
-        android:paddingLeft="10dip">  
+        android:paddingLeft="10dip">
         <TextView   
                 android:layout_height="wrap_content"   
                 android:layout_width="fill_parent"   
                 android:id="@+id/ItemTitle"   
-                android:textSize="30dip">  
+                android:textSize="30dip">
         </TextView>  
         <TextView   
                 android:layout_height="wrap_content"   
                 android:layout_width="fill_parent"   
-                android:id="@+id/ItemText">  
+                android:id="@+id/ItemText">
         </TextView>  
 </LinearLayout> 

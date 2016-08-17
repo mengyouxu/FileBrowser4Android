@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="meng.FileManager"
+    package="meng.FileBrowser"
     android:versionCode="1"
     android:versionName="1.0" >
 
-    <uses-sdk android:minSdkVersion="15" />
+    <uses-sdk android:minSdkVersion="16" />
 	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name" >
         <activity
-            android:name=".FileBrowserActivity"
-            android:label="@string/app_name" >
+            android:name="meng.FileBrowser.FileBrowserActivity"
+            android:label="FileBrowserActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -20,47 +21,62 @@
         </activity>
 
         <activity
-            android:name=".VideoPlayerActivity"
-            android:label="@string/app_name" >
+            android:name="meng.FileBrowser.VideoPlayerActivity"
+            android:label="VideoPlayerActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.view" />
+                <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="application/octet-stream" />
-                <data android:mimeType="video/mpeg"></data>
+                <data android:mimeType="video/mpeg" />
                 <data android:mimeType="video/quicktime" />
                 <data android:mimeType="video/x-msvideo" />
                 <data android:mimeType="video/x-sgi-movie" />
                 <data android:mimeType="video/3gpp" />
                 <data android:mimeType="video/mp4" />
+                <data android:mimeType="video/mp2ts" />
+                <data android:mimeType="video/x-matroska" />
+                <data android:mimeType="video/x-ms-wmv" />
+                <data android:mimeType="video/x-flv" />
+                <data android:mimeType="video/webm" />
 
             </intent-filter>
         </activity>
         <activity
-            android:name=".MediaCodecTest"
-            android:label="@string/app_name" >
+            android:name="meng.FileBrowser.MediaCodecTest"
+            android:label="MediaCodecTest" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".MusicPlayerActivity"
+            android:name="meng.FileBrowser.MusicPlayer"
             android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="audio/mpeg" />
+                <data android:mimeType="application/ogg" />
+                <data android:mimeType="audio/x-wav" />
+                <data android:mimeType="video/x-AC3" />
+                <data android:mimeType="audio/aac-adts" />
+                <data android:mimeType="audio/x-ms-wma" />
+                <data android:mimeType="audio/x-ms-wmapro" />
+                <data android:mimeType="audio/x-dts" />
+                <data android:mimeType="audio/flac-EX" />
+
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="meng.FileBrowser.MusicPlayerActivity"
+            android:label="MusicPlayerActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".MusicPlayer"
-            android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".VideoPlayer"
+            android:name="meng.FileBrowser.VideoPlayer"
             android:label="@string/video_player_title" >
 
         </activity>
