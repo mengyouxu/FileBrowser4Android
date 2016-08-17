@@ -13,7 +13,7 @@
         android:label="@string/app_name" >
         <activity
             android:name="meng.FileBrowser.FileBrowserActivity"
-            android:label="FileBrowserActivity" >
+            android:label="FileBrowser" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -22,7 +22,7 @@
 
         <activity
             android:name="meng.FileBrowser.VideoPlayerActivity"
-            android:label="VideoPlayerActivity" >
+            android:label="FileBrowser.VideoPlayer" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
@@ -51,7 +51,26 @@
         </activity>
         <activity
             android:name="meng.FileBrowser.MusicPlayer"
-            android:label="@string/app_name" >
+            android:label="FileBrowser.MusicPlayer" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="audio/mpeg" />
+                <data android:mimeType="application/ogg" />
+                <data android:mimeType="audio/x-wav" />
+                <data android:mimeType="video/x-AC3" />
+                <data android:mimeType="audio/aac-adts" />
+                <data android:mimeType="audio/x-ms-wma" />
+                <data android:mimeType="audio/x-ms-wmapro" />
+                <data android:mimeType="audio/x-dts" />
+                <data android:mimeType="audio/flac-EX" />
+
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="meng.FileBrowser.ExoPlayerActivity"
+            android:label="FileBrowser.ExoPlayer" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
