@@ -46,14 +46,6 @@ public class FileBrowserActivity extends Activity {
 		} else {
 			updateFileList("/sdcard/");
 		}
-
-
-		//File f = new File("/storage/sdcard");
-		//if(f.exists()){
-		//	updateFileList("/storage/sdcard");
-		//} else {
-		//	updateFileList("/sdcard/");
-		//}
     }
     
     private void initFileList(){
