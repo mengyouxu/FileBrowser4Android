@@ -66,8 +66,6 @@ public class VideoPlayer extends Activity {
         file_path = bundle_1.getString("file_path");
         Log.i(TAG,"setDataSource: " + file_path);
 
-
-
         //params_r.width = 600;
         //params_r.height = 400;
         //params_r.leftMargin = 212;

@@ -15,6 +15,10 @@ public class VideoPlayerActivity extends Activity{
     String TAG="VideoPlayerActivity";
     String file_path = null;
 
+    Button button_mediaplayer;
+    Button button_mediacodec;
+    Button button_exoplayer;
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -32,11 +36,14 @@ public class VideoPlayerActivity extends Activity{
             bundle_1 = intent_1.getExtras();
             file_path = bundle_1.getString("file_path");
         }
-        Button button_mediaplayer = (Button) findViewById(R.id.button_use_mediaplayer);
+        button_mediaplayer = (Button) findViewById(R.id.button_use_mediaplayer);
         button_mediaplayer.setOnClickListener(buttonListener);
 
-        Button button_mediacodec = (Button) findViewById(R.id.button_use_mediacode);
+        button_mediacodec = (Button) findViewById(R.id.button_use_mediacode);
         button_mediacodec.setOnClickListener(buttonListener);
+
+        button_exoplayer = (Button) findViewById(R.id.button_use_exoplayer);
+        button_exoplayer.setOnClickListener(buttonListener);
     }
 
     /*

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
+import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 
@@ -16,15 +17,19 @@ import com.google.android.exoplayer.ExoPlayer;
 import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
 import com.google.android.exoplayer.MediaCodecSelector;
 import com.google.android.exoplayer.MediaCodecTrackRenderer;
+import com.google.android.exoplayer.MediaCodecVideoTrackRenderer;
 import com.google.android.exoplayer.audio.AudioTrack;
 import com.google.android.exoplayer.extractor.Extractor;
 import com.google.android.exoplayer.extractor.ExtractorSampleSource;
 import com.google.android.exoplayer.extractor.mp3.Mp3Extractor;
+import com.google.android.exoplayer.extractor.ts.TsExtractor;
 import com.google.android.exoplayer.upstream.Allocator;
 import com.google.android.exoplayer.upstream.DataSource;
 import com.google.android.exoplayer.upstream.DefaultAllocator;
 import com.google.android.exoplayer.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer.upstream.DefaultUriDataSource;
+import com.google.android.exoplayer.upstream.TransferListener;
+import com.google.android.exoplayer.upstream.UdpDataSource;
 import com.google.android.exoplayer.util.Util;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -33,7 +38,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 /**
  * Created by mengyouxu on 2016/5/12.
  */
-public class ExoPlayerActivity extends Activity implements ExoPlayer.Listener, MediaCodecAudioTrackRenderer.EventListener {
+public class ExoPlayerActivity extends Activity implements ExoPlayer.Listener, MediaCodecAudioTrackRenderer.EventListener,
+        TransferListener {
     private String TAG = "ExoPlayerActivity";
     String file_path = null;
     Button btn1;
@@ -46,11 +52,13 @@ public class ExoPlayerActivity extends Activity implements ExoPlayer.Listener, M
     private ExtractorSampleSource sampleSource;
     private DataSource dataSource;
     private DefaultBandwidthMeter bandwidthMeter;
-    private MediaCodecAudioTrackRenderer audioRenderer;
+    private MediaCodecAudioTrackRenderer mAudioRenderer;
+    private MediaCodecVideoTrackRenderer mVideoRenderer;
     private Allocator allocator;
     private Uri uri;
     private Extractor mp3Extractor;
-
+    private Extractor mTSExtractor;
+    private SurfaceView mSurfaceView;
     private static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
     private static final int BUFFER_SEGMENT_COUNT = 256;
     /**
@@ -64,19 +72,6 @@ public class ExoPlayerActivity extends Activity implements ExoPlayer.Listener, M
         super.onCreate(savedInstanceState);
 
         this.setContentView(R.layout.videoplayer);
-
-        Intent intent_1 = this.getIntent();
-        String action = intent_1.getAction();
-        if (intent_1.ACTION_VIEW.equals(action)) {
-            Log.i(TAG, "get action");
-            Uri uri = (Uri) intent_1.getData();
-            file_path = uri.getPath();
-            Log.i(TAG, "file name : " + file_path);
-        } else {
-            Bundle bundle_1 = intent_1.getExtras();
-            file_path = bundle_1.getString("file_path");
-        }
-
         btn1 = (Button) this.findViewById(R.id.btn1);
         btn2 = (Button) this.findViewById(R.id.btn2);
         btn3 = (Button) this.findViewById(R.id.btn3);
@@ -85,32 +80,55 @@ public class ExoPlayerActivity extends Activity implements ExoPlayer.Listener, M
         btn2.setOnClickListener(buttonListener);
         btn3.setOnClickListener(buttonListener);
 
-        String sdcardPath;
-        boolean hasSDCard = Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
-        if (hasSDCard == true) {
-            sdcardPath = Environment.getExternalStorageDirectory().getPath();
-            Log.i(TAG, "sdcardPath : " + file_path);
-            uri = Uri.parse(file_path);
+        Intent intent_1 = this.getIntent();
+        String action = intent_1.getAction();
+        if (intent_1.ACTION_VIEW.equals(action)) {
+            Log.i(TAG, "get action");
+            uri = (Uri) intent_1.getData();
         } else {
-            return;
+            Bundle bundle_1 = intent_1.getExtras();
+            file_path = bundle_1.getString("file_path");
+            uri = Uri.parse(file_path);
         }
-        player = ExoPlayer.Factory.newInstance(4, 1000, 5000);
+        Log.i(TAG, "file name : " + uri.toString() + ", host: " + uri.getHost() + ", port: " + uri.getPort());
+        Log.i(TAG, "uri scheme : " + uri.getScheme());
+
+        mSurfaceView = (SurfaceView) this.findViewById(R.id.surfaceView);
+
+        player = ExoPlayer.Factory.newInstance(2, 1000, 5000);
         player.addListener(this);
         allocator = new DefaultAllocator(BUFFER_SEGMENT_SIZE);
         mainHandler = new Handler();
         userAgent = Util.getUserAgent(this, "ExoPlayerDemo");
-        // Build the audio renderers.
-        Log.i(TAG, "play target: " + uri.toString());
+        Log.i(TAG, "UserAgent : " + userAgent);
         mp3Extractor = new Mp3Extractor();
-        bandwidthMeter = new DefaultBandwidthMeter(mainHandler, null);
-        dataSource = new DefaultUriDataSource(this, bandwidthMeter, userAgent);
-        sampleSource = new ExtractorSampleSource(uri, dataSource, allocator,
-                BUFFER_SEGMENT_COUNT * BUFFER_SEGMENT_SIZE, mp3Extractor);
+        mTSExtractor = new TsExtractor();
 
-        audioRenderer = new MediaCodecAudioTrackRenderer(sampleSource,
+        bandwidthMeter = new DefaultBandwidthMeter(mainHandler, null);
+
+        if(uri.getScheme() == null){
+            dataSource = new DefaultUriDataSource(this, bandwidthMeter, userAgent);
+            Log.i(TAG, "Use DefaultUriDataSource (uri scheme == null)");
+        } else if(uri.getScheme().toString().compareTo("udp") == 0){
+            //  UdpDataSource(TransferListener listener, int maxPacketSize, int socketTimeoutMillis)
+            dataSource = new UdpDataSource(this, 2000, 3000);
+
+            Log.i(TAG, "Use UdpDataSource");
+        } else {
+            dataSource = new DefaultUriDataSource(this, bandwidthMeter, userAgent);
+            Log.i(TAG, "Use DefaultUriDataSource");
+        }
+        sampleSource = new ExtractorSampleSource(uri, dataSource, allocator,
+                BUFFER_SEGMENT_COUNT * BUFFER_SEGMENT_SIZE, mp3Extractor, mTSExtractor);
+
+        mAudioRenderer = new MediaCodecAudioTrackRenderer(sampleSource,
                 MediaCodecSelector.DEFAULT, null, true);
-        player.prepare(audioRenderer);
-        player.setPlayWhenReady(true);
+        mVideoRenderer = new MediaCodecVideoTrackRenderer(this, sampleSource,
+                MediaCodecSelector.DEFAULT, MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT);
+
+        player.sendMessage(mVideoRenderer, MediaCodecVideoTrackRenderer.MSG_SET_SURFACE, mSurfaceView.getHolder().getSurface());
+        player.prepare(mAudioRenderer,mVideoRenderer);
+        // player.setPlayWhenReady(true);
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
@@ -260,5 +278,29 @@ public class ExoPlayerActivity extends Activity implements ExoPlayer.Listener, M
         super.onDestroy();
         // The activity is about to be destroyed
         Log.i(TAG, "onDestroy");
+    }
+
+    @Override
+    protected void onRestart(){
+        super.onRestart();
+        Log.i(TAG, "onRestart");
+    }
+
+    @Override
+    public void onTransferStart() {
+        //  interface @ TransferListener
+        Log.i(TAG, "onTransferStart");
+    }
+
+    @Override
+    public void onBytesTransferred(int i) {
+        //  interface @ TransferListener
+        //Log.i(TAG, "onBytesTransferred : " + i + " bytes");
+    }
+
+    @Override
+    public void onTransferEnd() {
+        //  interface @ TransferListener
+        Log.i(TAG, "onTransferEnd");
     }
 }

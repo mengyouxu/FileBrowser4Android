@@ -85,6 +85,18 @@
                 <data android:mimeType="audio/x-dts" />
                 <data android:mimeType="audio/flac-EX" />
 
+                <data android:mimeType="application/octet-stream" />
+                <data android:mimeType="video/mpeg" />
+                <data android:mimeType="video/quicktime" />
+                <data android:mimeType="video/x-msvideo" />
+                <data android:mimeType="video/x-sgi-movie" />
+                <data android:mimeType="video/3gpp" />
+                <data android:mimeType="video/mp4" />
+                <data android:mimeType="video/mp2ts" />
+                <data android:mimeType="video/x-matroska" />
+                <data android:mimeType="video/x-ms-wmv" />
+                <data android:mimeType="video/x-flv" />
+                <data android:mimeType="video/webm" />
             </intent-filter>
         </activity>
         <activity
