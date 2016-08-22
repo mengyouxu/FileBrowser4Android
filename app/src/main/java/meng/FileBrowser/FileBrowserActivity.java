@@ -45,6 +45,7 @@ public class FileBrowserActivity extends Activity {
 			updateFileList(sdcardPath);
 		} else {
 			updateFileList("/sdcard/");
+			sdcardPath = new String("/sdcard/");
 		}
     }
     
@@ -177,11 +178,16 @@ public class FileBrowserActivity extends Activity {
         File tempFile = null;
 
         if(keyCode == KeyEvent.KEYCODE_BACK){
-			if(currentDir.equals("/")) {
+			if(currentDir != null && currentDir.equals("/")) {
 				return super.onKeyDown(keyCode, event);
 			}
-			File fileOnClick =  new File(currentDir);
-			currentDir = fileOnClick.getParent();
+			try {
+				File fileOnClick = new File(currentDir);
+				currentDir = fileOnClick.getParent();
+			} catch(Exception e) {
+				Log.e(TAG, "KEYCODE_BACK Exception: " + e.getMessage());
+				currentDir = sdcardPath;
+			}
 			updateFileList(currentDir);
         }
         return true;
