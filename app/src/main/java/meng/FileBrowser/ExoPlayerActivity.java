@@ -46,11 +46,11 @@ public class ExoPlayerActivity extends Activity implements ExoPlayer.Listener, M
     Button btn2;
     Button btn3;
 
-    private ExoPlayer player;
+    private ExoPlayer mPlayer;
     private String userAgent;
     private Handler mainHandler;
-    private ExtractorSampleSource sampleSource;
-    private DataSource dataSource;
+    private ExtractorSampleSource mSampleSource;
+    private DataSource mDataSource;
     private DefaultBandwidthMeter bandwidthMeter;
     private MediaCodecAudioTrackRenderer mAudioRenderer;
     private MediaCodecVideoTrackRenderer mVideoRenderer;
@@ -95,8 +95,8 @@ public class ExoPlayerActivity extends Activity implements ExoPlayer.Listener, M
 
         mSurfaceView = (SurfaceView) this.findViewById(R.id.surfaceView);
 
-        player = ExoPlayer.Factory.newInstance(2, 1000, 5000);
-        player.addListener(this);
+        mPlayer = ExoPlayer.Factory.newInstance(2, 1000, 5000);
+        mPlayer.addListener(this);
         allocator = new DefaultAllocator(BUFFER_SEGMENT_SIZE);
         mainHandler = new Handler();
         userAgent = Util.getUserAgent(this, "ExoPlayerDemo");
@@ -107,28 +107,33 @@ public class ExoPlayerActivity extends Activity implements ExoPlayer.Listener, M
         bandwidthMeter = new DefaultBandwidthMeter(mainHandler, null);
 
         if(uri.getScheme() == null){
-            dataSource = new DefaultUriDataSource(this, bandwidthMeter, userAgent);
+            mDataSource = new DefaultUriDataSource(this, bandwidthMeter, userAgent);
             Log.i(TAG, "Use DefaultUriDataSource (uri scheme == null)");
         } else if(uri.getScheme().toString().compareTo("udp") == 0){
             //  UdpDataSource(TransferListener listener, int maxPacketSize, int socketTimeoutMillis)
-            dataSource = new UdpDataSource(this, 2000, 3000);
-
+            //mDataSource = new UdpDataSource(this, 2000, 3000);
+            mDataSource = new UdpDataSource(this, 2000, 8000);
             Log.i(TAG, "Use UdpDataSource");
+        } else if(uri.getScheme().toString().compareTo("udp2") == 0){
+            //  UdpDataSource(TransferListener listener, int maxPacketSize, int socketTimeoutMillis)
+            //mDataSource = new UdpDataSource(this, 2000, 3000);
+            mDataSource = new UdpDataSource2(this, 2000, 8000);
+            Log.i(TAG, "Use UdpDataSource2");
         } else {
-            dataSource = new DefaultUriDataSource(this, bandwidthMeter, userAgent);
+            mDataSource = new DefaultUriDataSource(this, bandwidthMeter, userAgent);
             Log.i(TAG, "Use DefaultUriDataSource");
         }
-        sampleSource = new ExtractorSampleSource(uri, dataSource, allocator,
+        mSampleSource = new ExtractorSampleSource(uri, mDataSource, allocator,
                 BUFFER_SEGMENT_COUNT * BUFFER_SEGMENT_SIZE, mp3Extractor, mTSExtractor);
 
-        mAudioRenderer = new MediaCodecAudioTrackRenderer(sampleSource,
+        mAudioRenderer = new MediaCodecAudioTrackRenderer(mSampleSource,
                 MediaCodecSelector.DEFAULT, null, true);
-        mVideoRenderer = new MediaCodecVideoTrackRenderer(this, sampleSource,
+        mVideoRenderer = new MediaCodecVideoTrackRenderer(this, mSampleSource,
                 MediaCodecSelector.DEFAULT, MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT);
 
-        player.sendMessage(mVideoRenderer, MediaCodecVideoTrackRenderer.MSG_SET_SURFACE, mSurfaceView.getHolder().getSurface());
-        player.prepare(mAudioRenderer,mVideoRenderer);
-        // player.setPlayWhenReady(true);
+        mPlayer.sendMessage(mVideoRenderer, MediaCodecVideoTrackRenderer.MSG_SET_SURFACE, mSurfaceView.getHolder().getSurface());
+        mPlayer.prepare(mAudioRenderer,mVideoRenderer);
+        mPlayer.setPlayWhenReady(true);
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
@@ -140,7 +145,7 @@ public class ExoPlayerActivity extends Activity implements ExoPlayer.Listener, M
             switch (v.getId()) {
                 case R.id.btn1:
                     Log.i(TAG, "R.id.btn1");
-                    player.setPlayWhenReady(true);
+                    mPlayer.setPlayWhenReady(true);
                     break;
                 case R.id.btn2:
                     Log.i(TAG, "R.id.btn2");
@@ -266,8 +271,8 @@ public class ExoPlayerActivity extends Activity implements ExoPlayer.Listener, M
         );
         AppIndex.AppIndexApi.end(client, viewAction);
         // The activity is no longer visible (it is now "stopped")
-        player.stop();
-        Log.i(TAG, "onStop stop player");
+        mPlayer.stop();
+        Log.i(TAG, "onStop stop mPlayer");
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client.disconnect();

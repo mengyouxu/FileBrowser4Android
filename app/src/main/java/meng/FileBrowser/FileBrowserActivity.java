@@ -81,7 +81,7 @@ public class FileBrowserActivity extends Activity {
     	String[] fileNameList =  null;
     	File dir = null;
     	dir =  new File(path);
-    	fileNameList = dir.list();
+		fileNameList = dir.list();
 
     	return fileNameList;
     }

@@ -25,3 +25,7 @@
 [2016-08-22]
     1. Play udp://xxxx:yy with ExoPlayer
     2. Fix issue: FileBrowserAcitvity crash when press Back key.
+
+[2016-09-22]
+    1. Rewrite UdpDataSource -> UdpDataSource2. NOT WORK WELL NOW.
+    2. Add Scheme "udp2" for testing(udp2://xxxx:xx -> UdpDataSource2)
