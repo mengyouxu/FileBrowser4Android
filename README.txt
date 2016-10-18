@@ -1,31 +1,26 @@
-# FileBrowser4Android
-#
-# This is a test purpose project.
-# You can play media file by:
-#    1. android.media.MediaPlayer
-#    2. android.media.MediaCodec/android.media.MediaExtractor
-#    3. ExoPlayer
-#
-#   Note:
-#   If you want to play some special uri, like:
-#       "/storage/sdcard/playlist.m3u8"
-#       "http://192.168.1.1/playlist.m3u8"
-#       "udp://192.168.1.1:1234"
-#   You can put the uri string into a "*.ulist" file. Then click it
-#   in FileBrowser.
-#
-[2016-08-16]
-	Now I can play media file by MediaPlayer or  MediaExtractor+MediaCodec;
-	To be done : using ExoPlayer
+说明:
+    此APK 主要用来测试Android 播放器的行为，针对的Android 4.4或更高的版本.
+    编译使用AndroidStudio 2.2.1.
+    这个是编译好的ExoPlayer库，可以直接使用里面的方法: \app\libs\ExoPlayer-r1.5.8.jar
 
-[2016-08-17]
-    1. Change project directory structor to Android Studio style.
-    2. ExoPlayerActivity can play mp3.
+    安装后的入口Activity 是FileBrowserActivity，显示名称 FileBrowser，该Activity会首先通过
+getExternalStorageDirectory() 访问ExternelStorage，用ListView显示文件列表.
 
-[2016-08-22]
-    1. Play udp://xxxx:yy with ExoPlayer
-    2. Fix issue: FileBrowserAcitvity crash when press Back key.
+    为了方便测试，FileBrowserActivity可以读取 “.ulist”后缀的text文件，将其第一行内容
+作为媒体文件连接发送给VideoPlayerActivity去播放. 比如：
+    echo "http://192.168.1.101/files/playlist.m3u8" > /sdcard/m3u8.ulist
+    在FileBrowser中点击m3u8.ulist文件的时候，VideoPlayerActivity就会启动,
+"http://192.168.1.101/files/playlist.m3u8" 就是VideoPlayer 要播放的片源地址.
 
-[2016-09-22]
-    1. Rewrite UdpDataSource -> UdpDataSource2. NOT WORK WELL NOW.
-    2. Add Scheme "udp2" for testing(udp2://xxxx:xx -> UdpDataSource2)
+    VideoPlayerActivity启动后，会提示 当前可以用三种方式播放媒体:
+            android.media.MediaPlayer 接口最简单，目前使用最广泛
+            android.media.MediaCodec  需要配合MediaExtractor使用，本Apk现在只能用这种方法播放Video，Audio会被忽略
+            ExoPlayer   使用比较复杂，但功能很丰富.
+
+
+.ulist 举例:
+    http://192.168.1.101/files/playlist.m3u8   -->播放hls媒体
+    /storage/sdcard/abc.mp4  -->播放本地文件abc.mp4
+
+    udp://192.168.1.101:1234  -->播放udp stream, 192.168.1.101是本机地址，127.0.0.1无法使用，目前还没查到原因
+    udp3://192.168.1.101:1234  -->此方法可以指定 使用native UdpDataSource播放udp stream，相对java UdpDataSource，丢包大大减少
