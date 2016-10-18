@@ -119,7 +119,12 @@ public class ExoPlayerActivity extends Activity implements ExoPlayer.Listener, M
             //mDataSource = new UdpDataSource(this, 2000, 3000);
             mDataSource = new UdpDataSource2(this, 2000, 8000);
             Log.i(TAG, "Use UdpDataSource2");
-        } else {
+        } else if(uri.getScheme().toString().compareTo("udp3") == 0){
+            //  UdpDataSource(TransferListener listener, int maxPacketSize, int socketTimeoutMillis)
+            //mDataSource = new UdpDataSource(this, 2000, 3000);
+            mDataSource = new UdpDataSource3(this, 2000, 8000);
+            Log.i(TAG, "Use UdpDataSource3");
+        }else {
             mDataSource = new DefaultUriDataSource(this, bandwidthMeter, userAgent);
             Log.i(TAG, "Use DefaultUriDataSource");
         }

@@ -46,7 +46,7 @@ import java.util.Queue;
 import java.util.concurrent.locks.Lock;
 
 public final class UdpDataSource2 implements UriDataSource {
-
+    private String TAG = "UdpDataSource2";
     /**
      * Thrown when an error is encountered when trying to read from a {@link UdpDataSource2}.
      */
@@ -139,7 +139,7 @@ public final class UdpDataSource2 implements UriDataSource {
         private final TransferListener listener;
         private final DatagramPacket packet;
         private final int socketTimeoutMillis;
-
+        private String TAG = "UdpCacher";
         private DataSpec dataSpec;
         private DatagramSocket socket;
         private MulticastSocket multicastSocket;
@@ -189,6 +189,7 @@ public final class UdpDataSource2 implements UriDataSource {
         @Override
         public void run() {
             Log.i("UdpDataSource2", "UdpCacheThread run");
+            int packetCount = 0;
             while (mWorking == true) {
                 if(socket == null){
                     continue;
@@ -206,11 +207,17 @@ public final class UdpDataSource2 implements UriDataSource {
                 dataPacket data = new dataPacket();
                 data.size = packet.getLength();
                 data.data = packetBuffer.clone();
+                packetCount++;
+                if(packetCount%100 == 0){
+                    Log.i(TAG, "packetCount = " + packetCount);
+                }
+                /*
                 try {
                     dumpTsFile.write(packetBuffer);
                 } catch (IOException e) {
                     Log.e("UdpDataSource2", "dumpTsFile.write : " + e.getMessage());
                 }
+                */
                 if (listener != null) {
                     //listener.onBytesTransferred(data.size);
                 }
@@ -234,6 +241,8 @@ public final class UdpDataSource2 implements UriDataSource {
                     multicastSocket.joinGroup(address);
                     socket = multicastSocket;
                 } else {
+                    Log.i(TAG, " new DatagramSocket");
+
                     socket = new DatagramSocket(socketAddress);
                 }
             } catch (IOException e) {
