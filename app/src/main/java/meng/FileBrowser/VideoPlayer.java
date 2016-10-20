@@ -274,7 +274,7 @@ public class VideoPlayer extends Activity {
             @Override
             public void onPrepared(MediaPlayer mp) {
                 Log.i(TAG, "onPrepared");
-                //mp.start();
+                mp.start();
                 mediaController.setAnchorView(videoView);
                 mediaController.show();
                 videoView.setOnTouchListener(new View.OnTouchListener() {
