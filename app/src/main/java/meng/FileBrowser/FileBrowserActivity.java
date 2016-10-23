@@ -26,7 +26,6 @@ public class FileBrowserActivity extends Activity {
 	private ListView fileListView = null;
 	private TextView currentDirTextView = null;
 	private String currentDir = null;
-	private String[] fileList = null;
 	private String sdcardPath = null;
     /** Called when the activity is first created. */
     @Override
@@ -44,9 +43,11 @@ public class FileBrowserActivity extends Activity {
 			Log.i(TAG, "sdcardPath : " + sdcardPath);
 			updateFileList(sdcardPath);
 		} else {
-			updateFileList("/sdcard/");
-			sdcardPath = new String("/sdcard/");
+			updateFileList("/");
+			sdcardPath = new String("/");
 		}
+		currentDir = sdcardPath;
+		Log.i(TAG, "onCreate currentDir : " + currentDir);
     }
     
     private void initFileList(){
@@ -56,20 +57,16 @@ public class FileBrowserActivity extends Activity {
         fileListView.setOnItemClickListener(fileListListener);
     }
     
-    private void showFilelist(){
-    	setContentView(R.layout.main);
-    	currentDirTextView = (TextView)findViewById(R.id.currentDir);
-    	fileListView = (ListView)findViewById(R.id.fileListView);
-    	fileListView.setOnItemClickListener(fileListListener);
-    	updateFileList(currentDir);
-    }
-    
     private void updateFileList(String path){
     	currentDirTextView.setText(path);
     	setFileListView(getFileList(path));
     }  
     
     private void setFileListView(String[] fileList){
+		if(fileList == null){
+			Log.i(TAG,"File list is null");
+			return;
+		}
     	Log.i(TAG,"File list length = " + fileList.length);
     	//for(String fileName:fileList){
     	//	Log.i(TAG,fileName);
@@ -82,7 +79,11 @@ public class FileBrowserActivity extends Activity {
     	File dir = null;
     	dir =  new File(path);
 		fileNameList = dir.list();
-
+		if(fileNameList == null){
+			Log.i(TAG,"list dir: " + path + " == null");
+			fileNameList = new String[1];
+            fileNameList[0] = "Empty dir or No permission to access";
+		}
     	return fileNameList;
     }
     
@@ -110,7 +111,7 @@ public class FileBrowserActivity extends Activity {
 				if(filename != null) {
 					showVideoPlayer(filename);
 				}
-			} else {
+			} else if(fileOnClick.isFile()){
 				openFile(fileOnClick);
 			}
     	}
@@ -176,7 +177,6 @@ public class FileBrowserActivity extends Activity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
         File tempFile = null;
-
         if(keyCode == KeyEvent.KEYCODE_BACK){
 			if(currentDir != null && currentDir.equals("/")) {
 				return super.onKeyDown(keyCode, event);
