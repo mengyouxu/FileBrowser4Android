@@ -5,7 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk android:minSdkVersion="18" />
-	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
 
@@ -67,6 +67,13 @@
                 <data android:mimeType="audio/x-ms-wmapro" />
                 <data android:mimeType="audio/x-dts" />
                 <data android:mimeType="audio/flac-EX" />
+                <data android:mimeType="audio/ape" />
+                <data android:mimeType="audio/flac" />
+                <data android:mimeType="audio/ac3" />
+                <data android:mimeType="audio/eac3" />
+                <data android:mimeType="audio/raw" />
+                <data android:mimeType="audio/3gpp" />
+                <data android:mimeType="audio/mp4a-latm" />
 
             </intent-filter>
         </activity>

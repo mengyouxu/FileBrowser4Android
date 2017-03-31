@@ -15,10 +15,10 @@ import java.io.IOException;
 public class MusicPlayer extends Activity{
 
     String TAG = "MusicPlayer";
-	private Button buttonPlay = null; 
-	private Button buttonStop = null;
-	private Button buttonPrev = null;
-	private Button buttonNext = null;
+    private Button buttonPlay = null; 
+    private Button buttonStop = null;
+    private Button buttonPrev = null;
+    private Button buttonNext = null;
     private MediaPlayer musicplayer = null;
 
     String file_path = null;
@@ -63,7 +63,7 @@ public class MusicPlayer extends Activity{
             @Override
             public void onPrepared(MediaPlayer mp) {
                 Log.i(TAG, "onPrepared");
-                musicplayer.seekTo(0);
+                musicplayer.start();
             }
         });
 
@@ -71,7 +71,7 @@ public class MusicPlayer extends Activity{
             @Override
             public void onSeekComplete(MediaPlayer mp) {
                 Log.i(TAG, "onSeekComplete");
-                musicplayer.start();
+
             }
         });
         musicplayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
