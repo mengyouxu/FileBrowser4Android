@@ -2,7 +2,7 @@
     此APK 主要用来测试Android 播放器的行为，针对的是Android 4.4或更高的版本.
 
 编译好的Apk下载地址:
-    http://pan.baidu.com/s/1bpL0hVD
+    链接: https://pan.baidu.com/s/1-AQKmC9Yt6v1s_zE0L2jjQ 提取码: dn3x
 
     编译使用AndroidStudio 2.2.1.
     \app\libs\ExoPlayer-r1.5.8.jar 这个是编译好的ExoPlayer库，可以直接使用里面的方法.
